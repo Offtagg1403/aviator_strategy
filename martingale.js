@@ -10,11 +10,16 @@
 
 }
 
+function findBestBet(loss,bet,multiplier){
+    let currentB = bet
+    if(loss>0)
+    currentB =  (loss/(multiplier-1))
+    return currentB
+}
 function maxLossBudget(bet,multiplier,maxLoseStreak){
     let loss=bet
-    for(x=0;x<maxLoseStreak;x++){
-        currentBet = (loss/multiplier)
-        loss += currentBet     
+    for(x=1;x<maxLoseStreak;x++){
+        loss += findBestBet(loss,0,multiplier)     
     }
     return loss
 }
@@ -25,6 +30,13 @@ function maxLossBudget(bet,multiplier,maxLoseStreak){
     
     let dayStat = `day ${BASE.prevDay} total games: ${BASE.gameNumber} loseStreak ${BASE.loseStreaks.length} maxLoseStreak ${maxLoseStreak} maxloss ${loss} lose count ${BASE.loseStreaks.flat().length}  winStreak: ${BASE.winStreaks.length} win count: ${BASE.winStreaks.flat().length} BASE.profit: ${BASE.profit}`
     console.log(dayStat)
+
+    BASE.loseStreaks.forEach(l =>{
+        const loss = maxLossBudget(bet,multiplier,l.length)
+  //      console.log(`streak length: ${l.length} loss: ${loss}`)
+    })
+    
+   
 
   //  console.log("BASE.loseStreaks")
    // BASE.loseStreaks.forEach(l =>console.log(l.length))
@@ -52,10 +64,7 @@ function maxLossBudget(bet,multiplier,maxLoseStreak){
 
       //  break
     }
-    let currentBet = bet
-      if(prevLoss>0){
-        currentBet = (prevLoss/multiplier)
-      }
+    let currentBet = findBestBet(prevLoss,bet,multiplier)
 
     
    // if(BASE.gameNumber >= offset){
